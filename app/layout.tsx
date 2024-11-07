@@ -2,10 +2,9 @@
 
 import localFont from "next/font/local";
 import SidebarDrawer from "./components/sidebar";
-import NotLogin from "./pages/home";
+import NotLogin from "./pages/home/NotLoginPage";
 import { useSession } from "next-auth/react";
 import { SessionProvider } from "next-auth/react";
-// import { CustomProviders } from "./provider";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import "./globals.css";
@@ -35,30 +34,21 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return session ? 
-  (
-    <>
-      <SidebarDrawer>{children}</SidebarDrawer>
-    </>
-  )
-  : 
-  <NotLogin />;
+  return session ? (
+    <SidebarDrawer>{children}</SidebarDrawer>
+  ) : (
+    <NotLogin />
+  );
 }
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <SessionProvider>
-          <AuthWrapper>
-            <html lang="en">
-              <body>{children}</body>
-            </html>
-          </AuthWrapper>
+          <AuthWrapper>{children}</AuthWrapper>
         </SessionProvider>
       </body>
     </html>

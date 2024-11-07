@@ -16,39 +16,46 @@ import CloseIcon from "@mui/icons-material/Close";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { grey } from "@mui/material/colors";
 
 export default function TemporaryDrawer() {
   const [open, setOpen] = React.useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
 
-  const { data: session } = useSession();
+  const handleNavigation = (path: string) => {
+    router.push(path);
+    setOpen(false);
+  };
 
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+    <Box sx={{ width: 250 }} role="presentation" className="text-white" onClick={toggleDrawer(false)}>
       <List>
         <ListItem disablePadding className="flex justify-end">
           <Button onClick={toggleDrawer(true)} className="px-0">
-            <CloseIcon color="action" />
+            <CloseIcon sx={{ color: grey[50] }} />
           </Button>
         </ListItem>
       </List>
       <Divider />
       <List>
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton onClick={() => handleNavigation("/")}>
             <ListItemIcon>
-              <HomeIcon />
+              <HomeIcon sx={{ color: grey[50] }} />
             </ListItemIcon>
             <ListItemText primary="Home" />
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton>
+          <ListItemButton onClick={() => handleNavigation("/game")}>
             <ListItemIcon>
-              <GamesIcon />
+              <GamesIcon sx={{ color: grey[50] }} />
             </ListItemIcon>
             <ListItemText primary="Play Game" />
           </ListItemButton>
@@ -62,7 +69,7 @@ export default function TemporaryDrawer() {
       <div className="flex justify-between py-2">
         <div>
           <Button onClick={toggleDrawer(true)}>
-            <MenuIcon />
+            <MenuIcon sx={{ color: grey[50] }} />
           </Button>
           <Drawer open={open} onClose={toggleDrawer(false)}>
             {DrawerList}
@@ -71,7 +78,7 @@ export default function TemporaryDrawer() {
         <div className="flex items-center">
           <p className="px-3 py-1 border border-gray-800 bg-gray-900 rounded-lg">{session.user?.email}</p>
           <Button onClick={() => signOut()}>
-            <LogoutIcon />
+            <LogoutIcon sx={{ color: grey[50] }} />
           </Button>
         </div>
       </div>
