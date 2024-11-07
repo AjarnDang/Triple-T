@@ -23,7 +23,7 @@ const handler = NextAuth({
             return null
           }
         })
-      ]
+      ],
   })
   
   export { handler as GET, handler as POST }
