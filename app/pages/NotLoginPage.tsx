@@ -23,9 +23,9 @@ function InfoDialog() {
 
   return (
     <React.Fragment>
-      <button onClick={handleClickOpen} className="px-0">
+      <Button onClick={handleClickOpen} className="px-0">
         <InfoIcon className="px-0" />
-      </button>
+      </Button>
       <Dialog
         open={open}
         onClose={handleClose}

@@ -1,35 +1,41 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import styles from "./TicTacToe.module.css";
+import React, { useState, useEffect } from "react";
 
-type Player = "X" | "O" | null;
-
-const TicTacToe: React.FC = () => {
-  const [board, setBoard] = useState<Player[]>(Array(9).fill(null));
-  const [isXNext, setIsXNext] = useState(true);
-  const [winner, setWinner] = useState<Player>(null);
+// Create the Game Board Component
+const Board: React.FC = () => {
+  const [squares, setSquares] = useState<string[]>(Array(9).fill(""));
+  const [xIsNext, setXIsNext] = useState<boolean>(true);
+  const [winner, setWinner] = useState<string | null>(null);
+  const [score, setScore] = useState<number>(0); // Player's score
+  const [streak, setStreak] = useState<number>(0); // Winning streak
 
   const handleClick = (index: number) => {
-    // If there’s already a winner or the cell is occupied, skip
-    if (winner || board[index]) return;
+    if (squares[index] || winner || !xIsNext) return; // Prevent click if square is filled, game over, or it's the bot's turn
+    
+    const newSquares = squares.slice(); // Create a copy of the current squares
+    newSquares[index] = xIsNext ? "X" : "O"; // Mark current player's move
+    
+    setSquares(newSquares);
+    setXIsNext(!xIsNext); // Switch player
 
-    // Update the board with the current player’s move
-    const newBoard = board.slice();
-    newBoard[index] = isXNext ? "X" : "O";
-    setBoard(newBoard);
-
-    // Check if the move created a winning condition
-    const newWinner = calculateWinner(newBoard);
-    if (newWinner) {
-      setWinner(newWinner);
-    } else {
-      // If no winner, switch turns
-      setIsXNext(!isXNext);
+    const gameWinner = calculateWinner(newSquares);
+    if (gameWinner) {
+      setWinner(gameWinner); // Set winner
     }
   };
 
-  const calculateWinner = (board: Player[]): Player => {
+  const renderSquare = (index: number) => (
+    <button
+      key={index} // Add key here to resolve the warning
+      className="w-16 h-16 border-2 border-gray-600 flex justify-center items-center text-2xl font-bold"
+      onClick={() => handleClick(index)}
+    >
+      {squares[index]}
+    </button>
+  );
+
+  const calculateWinner = (squares: string[]): string | null => {
     const lines = [
       [0, 1, 2],
       [3, 4, 5],
@@ -41,47 +47,108 @@ const TicTacToe: React.FC = () => {
       [2, 4, 6],
     ];
 
-    for (let line of lines) {
-      const [a, b, c] = line;
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        return board[a];
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        return squares[a]; // Return the winner ('X' or 'O')
       }
     }
     return null;
   };
 
-  const resetGame = () => {
-    setBoard(Array(9).fill(null));
-    setIsXNext(true);
-    setWinner(null);
+  const botMove = () => {
+    // AI logic to make a move
+    const availableMoves = squares
+      .map((val, index) => (val === "" ? index : null))
+      .filter((index) => index !== null) as number[];
+
+    if (availableMoves.length === 0) return; // No moves left
+
+    // Make the AI choose a random move
+    const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+
+    // Update the board with the bot's move
+    const newSquares = squares.slice();
+    newSquares[randomMove] = "O";
+    setSquares(newSquares);
+    setXIsNext(true); // Switch back to the player
+
+    const gameWinner = calculateWinner(newSquares);
+    if (gameWinner) {
+      setWinner(gameWinner); // Set winner
+    }
   };
 
+  const handleEndRound = () => {
+    if (winner === "X") {
+      setScore((prev) => prev + 1); // Player wins
+      setStreak((prev) => prev + 1); // Increase winning streak
+    } else if (winner === "O") {
+      setScore((prev) => prev - 1); // Bot wins
+      setStreak(0); // Reset streak
+    }
+
+    // If player wins 3 times in a row, add bonus to score
+    if (streak >= 3) {
+      setScore((prev) => prev + 1);
+      setStreak(0); // Reset streak after bonus
+    }
+
+    // Restart the game after the round ends
+    setTimeout(restartGame, 1000); // Delay the reset so the player can see the result
+  };
+
+  const restartGame = () => {
+    setSquares(Array(9).fill(""));
+    setWinner(null);
+    setXIsNext(true);
+  };
+
+  useEffect(() => {
+    if (!xIsNext && !winner) {
+      // AI makes a move after the player
+      botMove();
+    } else if (winner) {
+      // Handle end of round
+      handleEndRound();
+    }
+  }, [xIsNext, squares, winner]);
+
   return (
-    <div className={styles.container}>
-      <h1>Tic Tac Toe</h1>
-      <div className={styles.board}>
-        {board.map((cell, index) => (
-          <button
-            key={index}
-            className={styles.cell}
-            onClick={() => handleClick(index)}
-          >
-            {cell}
-          </button>
-        ))}
+    <div className="text-center">
+      <div className="grid grid-cols-3 gap-2">
+        {Array(9)
+          .fill(null)
+          .map((_, index) => renderSquare(index))}
       </div>
-      <div className={styles.status}>
+      <div className="mt-4">
         {winner ? (
-          <p>Winner: {winner}</p>
+          <p className="text-2xl font-semibold">Winner: {winner}</p>
         ) : (
-          <p>Next Player: {isXNext ? "X" : "O"}</p>
+          <p className="text-xl">{xIsNext ? "Next Player: X" : "Bot's Turn (O)"}</p>
         )}
       </div>
-      <button onClick={resetGame} className={styles.resetButton}>
-        Reset Game
+      <div className="mt-4">
+        <p className="text-lg">Score: {score}</p>
+        <p className="text-lg">Current Streak: {streak}</p>
+      </div>
+      <button
+        onClick={restartGame}
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+      >
+        Restart Game
       </button>
     </div>
   );
 };
 
-export default TicTacToe;
+// App Component
+const App: React.FC = () => {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <Board />
+    </div>
+  );
+};
+
+export default App;

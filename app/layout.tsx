@@ -1,12 +1,6 @@
-"use client";
-
 import localFont from "next/font/local";
+import { CustomProviders } from "./provider";
 import SidebarDrawer from "./components/sidebar";
-import NotLogin from "./pages/home/NotLoginPage";
-import { useSession } from "next-auth/react";
-import { SessionProvider } from "next-auth/react";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -20,37 +14,23 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-function AuthWrapper({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
-
-  if (status === "loading") {
-    return (
-      <Backdrop
-        sx={(theme) => ({ color: "#fff", zIndex: theme.zIndex.drawer + 1 })}
-        open={true}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
-    );
-  }
-
-  return session ? (
-    <SidebarDrawer>{children}</SidebarDrawer>
-  ) : (
-    <NotLogin />
-  );
-}
-
 export default function RootLayout({
   children,
-}: { children: React.ReactNode }) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <SessionProvider>
-          <AuthWrapper>{children}</AuthWrapper>
-        </SessionProvider>
-      </body>
-    </html>
+    <CustomProviders>
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <SidebarDrawer />
+          <div className="container mx-auto sm:mx-64 p-4">
+            {children}
+          </div>
+        </body>
+      </html>
+    </CustomProviders>
   );
 }
