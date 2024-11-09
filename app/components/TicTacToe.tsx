@@ -272,8 +272,9 @@ const App: React.FC = () => {
           onClick={() => signIn()}
           className="btn border rounded-lg border-gray-800  hover:bg-slate-800 transition px-4 py-2 flex items-center space-x-2"
         >
-          <span>Sign in</span>
           <LoginIcon sx={{ color: grey[50] }} />
+          <span> Sign in </span>
+          
         </button>
       </div>
     );

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import HomeIcon from "@mui/icons-material/Home";
+import DescriptionIcon from '@mui/icons-material/Description';
 import GamesIcon from "@mui/icons-material/Games";
 import LogoutIcon from "@mui/icons-material/Logout";
 import LoginIcon from "@mui/icons-material/Login";
@@ -31,6 +32,11 @@ export default function SidebarDrawer() {
       name: "Home",
       link: "/",
       icon: HomeIcon,
+    },
+    {
+      name: "Doc",
+      link: "/doc",
+      icon: DescriptionIcon,
     },
     {
       name: "Play",
@@ -88,11 +94,8 @@ export default function SidebarDrawer() {
                       onClick={() => signOut()}
                       className="btn border rounded-lg border-gray-800 items-center hover:bg-slate-800 transition lg:flex"
                     >
-                      <span className="lg:flex sm:hidden hidden">
-                        Sign out &nbsp;
-                      </span>
-                      &nbsp;
                       <LogoutIcon sx={{ color: grey[50] }} />
+                      <span className="lg:flex sm:hidden hidden">&nbsp;Sign out </span> 
                     </button>
                   </>
                 ) : (
@@ -100,11 +103,8 @@ export default function SidebarDrawer() {
                     onClick={() => signIn()}
                     className="btn border rounded-lg border-gray-800 lg:flex items-center hover:bg-slate-800 transition"
                   >
-                    <span className="lg:flex sm:hidden hidden">
-                      Sign in &nbsp;
-                    </span>
-
                     <LoginIcon sx={{ color: grey[50] }} />
+                    <span className="lg:flex sm:hidden hidden">&nbsp;Sign in </span>    
                   </button>
                 )}
               </div>
