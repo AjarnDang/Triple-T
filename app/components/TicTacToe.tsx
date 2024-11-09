@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { useSession, signIn } from "next-auth/react";
 import ScoreDisplay from "./GameState";
+import Rank from "./Rank";
 import LoginIcon from "@mui/icons-material/Login";
 import { grey } from "@mui/material/colors";
+
 interface BoardProps {
   setScore: React.Dispatch<React.SetStateAction<number>>;
   setStreak: React.Dispatch<React.SetStateAction<number>>;
@@ -15,6 +17,7 @@ const Board: React.FC<BoardProps> = ({ setScore, setStreak, streak }) => {
   const [squares, setSquares] = useState<string[]>(Array(9).fill(""));
   const [xIsNext, setXIsNext] = useState<boolean>(true);
   const [winner, setWinner] = useState<string | null>(null);
+  const [difficulty, setDifficulty] = useState<string>("Medium");
 
   const handleClick = (index: number) => {
     if (squares[index] || winner || !xIsNext) return;
@@ -72,18 +75,73 @@ const Board: React.FC<BoardProps> = ({ setScore, setStreak, streak }) => {
 
     if (availableMoves.length === 0) return;
 
-    const randomMove =
-      availableMoves[Math.floor(Math.random() * availableMoves.length)];
-
-    const newSquares = squares.slice();
-    newSquares[randomMove] = "O";
-    setSquares(newSquares);
-    setXIsNext(true);
-
-    const gameWinner = calculateWinner(newSquares);
-    if (gameWinner) {
-      setWinner(gameWinner);
+    let selectedMove;
+    if (difficulty === "Easy") {
+      // Easy mode: Random move
+      selectedMove =
+        availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    } else if (difficulty === "Medium") {
+      // Medium mode: 50% chance to make a random move
+      const winningMove = findWinningMove("O") || findWinningMove("X");
+      selectedMove =
+        Math.random() > 0.5 && winningMove !== null
+          ? winningMove
+          : availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    } else if (difficulty === "Hard") {
+      // Hard mode: Prioritize blocking X and winning moves
+      selectedMove =
+        findWinningMove("O") ||
+        findWinningMove("X") ||
+        availableMoves[Math.floor(Math.random() * availableMoves.length)];
     }
+
+    if (selectedMove !== undefined) {
+      const newSquares = squares.slice();
+      newSquares[selectedMove] = "O";
+      setSquares(newSquares);
+      setXIsNext(true);
+
+      const gameWinner = calculateWinner(newSquares);
+      if (gameWinner) {
+        setWinner(gameWinner);
+      }
+    }
+  };
+
+  const findWinningMove = (player: string): number | null => {
+    for (const [a, b, c] of [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ]) {
+      if (
+        squares[a] === player &&
+        squares[a] === squares[b] &&
+        squares[c] === ""
+      ) {
+        return c;
+      }
+      if (
+        squares[a] === player &&
+        squares[a] === squares[c] &&
+        squares[b] === ""
+      ) {
+        return b;
+      }
+      if (
+        squares[b] === player &&
+        squares[b] === squares[c] &&
+        squares[a] === ""
+      ) {
+        return a;
+      }
+    }
+    return null;
   };
 
   const handleEndRound = () => {
@@ -106,6 +164,7 @@ const Board: React.FC<BoardProps> = ({ setScore, setStreak, streak }) => {
     setSquares(Array(9).fill(""));
     setWinner(null);
     setXIsNext(true);
+    setDifficulty("Medium");
   };
 
   useEffect(() => {
@@ -118,6 +177,47 @@ const Board: React.FC<BoardProps> = ({ setScore, setStreak, streak }) => {
 
   return (
     <div className="text-center">
+      <div className="inline-flex rounded-md shadow-sm" role="group">
+        <button
+          type="button"
+          onClick={() => setDifficulty("Easy")}
+          className={`px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg ${
+            difficulty === "Easy"
+              ? "bg-blue-800 text-white" // Active state
+              : "hover:bg-gray-100 hover:text-blue-700"
+          } focus:z-10 focus:ring-2 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white`}
+        >
+          Easy
+        </button>
+        <button
+          type="button"
+          onClick={() => setDifficulty("Medium")}
+          className={`px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 ${
+            difficulty === "Medium"
+              ? "bg-blue-800 text-white" // Active state
+              : "hover:bg-gray-100 hover:text-blue-700"
+          } focus:z-10 focus:ring-2 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white`}
+        >
+          Medium
+        </button>
+        <button
+          type="button"
+          onClick={() => setDifficulty("Hard")}
+          className={`px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg ${
+            difficulty === "Hard"
+              ? "bg-blue-800 text-white" // Active state
+              : "hover:bg-gray-100 hover:text-blue-700"
+          } focus:z-10 focus:ring-2 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white`}
+        >
+          Hard
+        </button>
+      </div>
+
+      <p className="mt-4 mb-4">
+        Current Difficulty: <span className="text-blue-500">{difficulty || "None"}</span>
+      </p>
+      
+
       <div className="grid grid-cols-3 gap-2">
         {Array(9)
           .fill(null)
@@ -125,16 +225,16 @@ const Board: React.FC<BoardProps> = ({ setScore, setStreak, streak }) => {
       </div>
       <div className="mt-4">
         {winner ? (
-          <p className="text-2xl font-semibold">Winner: {winner}</p>
+          <p className="font-semibold">Winner: {winner}</p>
         ) : (
-          <p className="text-xl">
+          <p>
             {xIsNext ? "Next Player: X" : "Bot's Turn (O)"}
           </p>
         )}
       </div>
       <button
         onClick={restartGame}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+        className="mt-4 btn border rounded-lg border-gray-800 bg-gray-800 dark:border-gray-700 hover:bg-slate-700 transition px-6 py-3"
       >
         Restart Game
       </button>
@@ -157,7 +257,10 @@ const App: React.FC = () => {
           </div>
         </div>
         <div>
-          <ScoreDisplay score={score} streak={streak} />
+          <div className="mb-4">
+            <ScoreDisplay score={score} streak={streak} />
+          </div>
+          <Rank />
         </div>
       </div>
     );
@@ -167,7 +270,7 @@ const App: React.FC = () => {
         <h1 className="text-center">You have to sign in to play the game</h1>
         <button
           onClick={() => signIn()}
-          className="btn border rounded-lg border-gray-800 hover:bg-slate-800 transition px-4 py-2 flex items-center space-x-2"
+          className="btn border rounded-lg border-gray-800  hover:bg-slate-800 transition px-4 py-2 flex items-center space-x-2"
         >
           <span>Sign in</span>
           <LoginIcon sx={{ color: grey[50] }} />
