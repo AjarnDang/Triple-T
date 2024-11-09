@@ -18,13 +18,13 @@ export default function SidebarDrawer() {
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const handleNavigation = (link: any) => {
+  const handleNavigation = (link: string) => {
     if (link === "/game" && !session) {
       signIn();
     } else {
-      window.location.href(link);
+      window.location.href = link;
     }
-  };
+  };  
 
   const Menu = [
     {
@@ -49,11 +49,11 @@ export default function SidebarDrawer() {
   };
 
   const isActive = (link: string) =>
-    pathname === link ? "bg-gray-200 dark:bg-gray-700" : "";
+    pathname === link ? "bg-gray-200 dark:bg-gray-800" : "";
 
   return (
     <>
-      <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+      <nav className="fixed top-0 z-50 w-full border-b border-gray-800 dark:bg-gray-900 dark:border-gray-700">
         <div className="px-3 py-3 lg:px-5 lg:pl-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center justify-start rtl:justify-end">
@@ -66,7 +66,7 @@ export default function SidebarDrawer() {
                 <span className="sr-only">Open sidebar</span>
                 <MenuIcon />
               </button>
-              <a href="https://flowbite.com" className="flex ms-2 md:me-24">
+              <a href="" className="flex ms-2 md:me-24">
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Tic_tac_toe.svg/1200px-Tic_tac_toe.svg.png"
                   className="h-8 me-3"
@@ -81,12 +81,12 @@ export default function SidebarDrawer() {
               <div className="flex items-center gap-2 ms-3">
                 {session ? (
                   <>
-                    <p className="px-2 py-[0.375rem] border rounded border-gray-600 items-center hover:bg-slate-800 transition lg:flex sm:hidden hidden">
+                    <p className="px-2 py-[0.375rem] border rounded-lg border-gray-800 items-center hover:bg-slate-800 transition lg:flex sm:hidden hidden">
                       {session.user?.email}
                     </p>
                     <button
                       onClick={() => signOut()}
-                      className="btn border border-gray-600 items-center hover:bg-slate-800 transition lg:flex"
+                      className="btn border rounded-lg border-gray-800 items-center hover:bg-slate-800 transition lg:flex"
                     >
                       <span className="lg:flex sm:hidden hidden">
                         Sign out &nbsp;
@@ -98,7 +98,7 @@ export default function SidebarDrawer() {
                 ) : (
                   <button
                     onClick={() => signIn()}
-                    className="btn border border-gray-600 lg:flex items-center hover:bg-slate-800 transition"
+                    className="btn border rounded-lg border-gray-800 lg:flex items-center hover:bg-slate-800 transition"
                   >
                     <span className="lg:flex sm:hidden hidden">
                       Sign in &nbsp;
@@ -117,16 +117,16 @@ export default function SidebarDrawer() {
         id="logo-sidebar"
         className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700`}
+        } md:translate-x-0 bg-white border-r border-gray-800 dark:bg-gray-900 dark:border-gray-700`}
         aria-label="Sidebar"
       >
-        <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+        <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-900">
           <ul className="space-y-2 font-medium">
             {Menu.map((item, index) => (
               <li key={index}>
                 <a
                   onClick={() => handleNavigation(item.link)}
-                  className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group cursor-pointer ${isActive(
+                  className={`flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-700 dark:hover:bg-gray-700 group cursor-pointer ${isActive(
                     item.link
                   )}`}
                 >
@@ -136,7 +136,7 @@ export default function SidebarDrawer() {
                       <span className="ms-3">{item.name}</span>
                     </div>
                     {!session && item.name === "Play" && (
-                      <LockIcon className="ml-2" />
+                      <LockIcon className="ml-2 opacity-20" />
                     )}
                   </div>
                 </a>

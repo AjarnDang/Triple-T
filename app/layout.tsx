@@ -26,8 +26,8 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <SidebarDrawer />
-          <div className="pt-16 md:px-64">
-            <div className="container mx-auto p-4">{children}</div>
+          <div className="pt-16 md:pl-64">
+            <div className="container mx-auto lg:py-6 py-4 lg:px-16 px-4">{children}</div>
           </div>
         </body>
       </html>

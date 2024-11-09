@@ -1,25 +1,32 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
+import { useSession, signIn } from "next-auth/react";
+import ScoreDisplay from "./GameState";
+import LoginIcon from "@mui/icons-material/Login";
+import { grey } from "@mui/material/colors";
+interface BoardProps {
+  setScore: React.Dispatch<React.SetStateAction<number>>;
+  setStreak: React.Dispatch<React.SetStateAction<number>>;
+  streak: number;
+}
 
-const Board: React.FC = () => {
+const Board: React.FC<BoardProps> = ({ setScore, setStreak, streak }) => {
   const [squares, setSquares] = useState<string[]>(Array(9).fill(""));
   const [xIsNext, setXIsNext] = useState<boolean>(true);
   const [winner, setWinner] = useState<string | null>(null);
-  const [score, setScore] = useState<number>(0); 
-  const [streak, setStreak] = useState<number>(0);
 
   const handleClick = (index: number) => {
     if (squares[index] || winner || !xIsNext) return;
-    const newSquares = squares.slice(); 
-    newSquares[index] = xIsNext ? "X" : "O"; 
-    
+    const newSquares = squares.slice();
+    newSquares[index] = xIsNext ? "X" : "O";
+
     setSquares(newSquares);
-    setXIsNext(!xIsNext); 
+    setXIsNext(!xIsNext);
 
     const gameWinner = calculateWinner(newSquares);
     if (gameWinner) {
-      setWinner(gameWinner); 
+      setWinner(gameWinner);
     }
   };
 
@@ -47,7 +54,11 @@ const Board: React.FC = () => {
 
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      if (
+        squares[a] &&
+        squares[a] === squares[b] &&
+        squares[a] === squares[c]
+      ) {
         return squares[a];
       }
     }
@@ -59,14 +70,15 @@ const Board: React.FC = () => {
       .map((val, index) => (val === "" ? index : null))
       .filter((index) => index !== null) as number[];
 
-    if (availableMoves.length === 0) return; 
+    if (availableMoves.length === 0) return;
 
-    const randomMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+    const randomMove =
+      availableMoves[Math.floor(Math.random() * availableMoves.length)];
 
     const newSquares = squares.slice();
     newSquares[randomMove] = "O";
     setSquares(newSquares);
-    setXIsNext(true); 
+    setXIsNext(true);
 
     const gameWinner = calculateWinner(newSquares);
     if (gameWinner) {
@@ -76,18 +88,18 @@ const Board: React.FC = () => {
 
   const handleEndRound = () => {
     if (winner === "X") {
-      setScore((prev) => prev + 1); 
-      setStreak((prev) => prev + 1); 
+      setScore((prev) => prev + 1);
+      setStreak((prev) => prev + 1);
     } else if (winner === "O") {
-      setScore((prev) => prev - 1); 
-      setStreak(0); 
+      setScore((prev) => prev - 1);
+      setStreak(0);
     }
 
     if (streak >= 3) {
       setScore((prev) => prev + 1);
-      setStreak((prev) => prev);
+      setStreak(0);
     }
-    setTimeout(restartGame, 1000); 
+    setTimeout(restartGame, 1000);
   };
 
   const restartGame = () => {
@@ -115,12 +127,10 @@ const Board: React.FC = () => {
         {winner ? (
           <p className="text-2xl font-semibold">Winner: {winner}</p>
         ) : (
-          <p className="text-xl">{xIsNext ? "Next Player: X" : "Bot's Turn (O)"}</p>
+          <p className="text-xl">
+            {xIsNext ? "Next Player: X" : "Bot's Turn (O)"}
+          </p>
         )}
-      </div>
-      <div className="mt-4">
-        <p className="text-lg">Score: {score}</p>
-        <p className="text-lg">Current Streak: {streak}</p>
       </div>
       <button
         onClick={restartGame}
@@ -133,11 +143,38 @@ const Board: React.FC = () => {
 };
 
 const App: React.FC = () => {
-  return (
-    <div className="flex justify-center items-center h-screen">
-      <Board />
-    </div>
-  );
+  const { data: session } = useSession();
+  const [score, setScore] = useState<number>(0);
+  const [streak, setStreak] = useState<number>(0);
+
+  if (session) {
+    return (
+      <div className="relative grid lg:grid-cols-3 grid-cols-1 gap-4">
+        <div className="lg:col-span-2">
+          <h1 className="text-2xl font-bold mb-8">TicTacToe</h1>
+          <div className="flex justify-center items-center h-[70vh]">
+            <Board setScore={setScore} setStreak={setStreak} streak={streak} />
+          </div>
+        </div>
+        <div>
+          <ScoreDisplay score={score} streak={streak} />
+        </div>
+      </div>
+    );
+  } else {
+    return (
+      <div className="flex flex-col justify-center items-center h-[80vh] space-y-2">
+        <h1 className="text-center">You have to sign in to play the game</h1>
+        <button
+          onClick={() => signIn()}
+          className="btn border rounded-lg border-gray-800 hover:bg-slate-800 transition px-4 py-2 flex items-center space-x-2"
+        >
+          <span>Sign in</span>
+          <LoginIcon sx={{ color: grey[50] }} />
+        </button>
+      </div>
+    );
+  }
 };
 
 export default App;
