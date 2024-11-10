@@ -16,7 +16,7 @@ const RankTable = () => {
     "Most Score",
     // "Losses",
     "Win Rate",
-    "Region",
+    // "Region",
   ];
 
   const rows = rankData.map((item, index) => [
@@ -25,7 +25,7 @@ const RankTable = () => {
     item.mostScore,
     // item.losses,
     item.avgWinRate + ' %',
-    item.region,
+    // item.region,
   ]);
 
   useEffect(() => {
