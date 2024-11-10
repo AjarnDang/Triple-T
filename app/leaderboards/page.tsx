@@ -4,7 +4,7 @@ import RankTopThree from "../components/RankTop3";
 
 export default function page() {
   return (
-    <div>
+    <div className="grow">
       <div className="my-8">
         <RankTopThree />
       </div>

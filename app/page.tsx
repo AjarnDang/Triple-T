@@ -10,13 +10,12 @@ import PersonIcon from "@mui/icons-material/Person";
 export default function Page() {
   const { data: session } = useSession();
   return (
-    <div className="flex justify-center items-center h-[70vh]">
+    <div className="flex justify-center items-center h-[75vh]">
       <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4">Welcome to the TicTacToe</h1>
-
+        <h1 className="text-2xl font-bold mb-2">Welcome to the TicTacToe</h1>
         {!session ? (
           <>
-            <p className="mb-4">
+            <p className="mb-8">
               Sign in to play the game and explore the features!
             </p>
             <button
@@ -44,7 +43,7 @@ export default function Page() {
           className="btn border rounded-lg border-gray-800 hover:bg-slate-800 transition px-4 py-2 flex items-center mb-2"
         >
           <DescriptionIcon sx={{ color: grey[50] }} />
-          <span> Documents </span>
+          <span> Document </span>
         </a>
       </div>
     </div>

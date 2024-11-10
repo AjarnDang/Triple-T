@@ -1,75 +1,76 @@
-import * as React from "react";
-import Box from "@mui/material/Box";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+"use client";
+
+import React, { useEffect, useRef } from "react";
+import { Box } from "@mui/material";
+import { DataTable } from "simple-datatables";
+import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
+import "simple-datatables/dist/style.css";
 import rankData from "../api/mocks/score";
 
 const RankTable = () => {
-  const columns: GridColDef[] = [
-    {
-      field: "rank",
-      headerName: "Rank",
-      width: 150,
-      sortable: true,
-    },
-    {
-      field: "username",
-      headerName: "Username",
-      width: 200,
-      sortable: true,
-    },
-    {
-      field: "mostScore",
-      headerName: "Most Score",
-      width: 150,
-      sortable: true,
-    },
-    {
-      field: "losses",
-      headerName: "Losses",
-      width: 150,
-      sortable: true,
-    },
-    {
-      field: "avgWinRate",
-      headerName: "Avg Win Rate (%)",
-      width: 200,
-      sortable: true,
-    },
-    {
-      field: "region",
-      headerName: "Region",
-      width: 150,
-      sortable: true,
-    },
+  const tableRef = useRef(null);
+
+  const columns = [
+    "Rank",
+    "Username",
+    "Most Score",
+    // "Losses",
+    "Win Rate",
+    "Region",
   ];
 
-  const rows = rankData.map((item, index) => ({
-    id: index + 1,
-    rank: index + 1,
-    username: item.username,
-    mostScore: item.mostScore,
-    losses: item.losses,
-    avgWinRate: item.avgWinRate,
-    region: item.region,
-  }));
+  const rows = rankData.map((item, index) => [
+    index + 1,
+    item.username,
+    item.mostScore,
+    // item.losses,
+    item.avgWinRate + ' %',
+    item.region,
+  ]);
+
+  useEffect(() => {
+    if (tableRef.current) {
+      new DataTable(tableRef.current, {
+        searchable: false,
+        fixedHeight: true,
+      });
+    }
+  }, []);
 
   return (
-    <Box sx={{ height: 500, width: "100%", minWidth: 200, overflow: "hidden", }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 20,
-            },
-          },
-        }}
-        sx={{
-          color: "#fff",
-        }}
-      />
-    </Box>
+    <>
+      <Box sx={{ width: "100%" }}>
+        <div className="table-wrapper overflow-x-auto">
+          <table
+            ref={tableRef}
+            className="min-w-[400px]"
+            id="default-table"
+          >
+            <thead>
+              <tr>
+                {columns.map((item, index) => (
+                  <th key={index}>
+                    <span className="flex items-center">
+                      {item}
+                      <UnfoldMoreIcon />
+                    </span>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, idx) => (
+                <tr key={idx}>
+                  {row.map((cell, index) => (
+                    <td key={index}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Box>
+    </>
   );
 };
 
