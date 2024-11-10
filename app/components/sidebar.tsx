@@ -45,7 +45,7 @@ export default function SidebarDrawer() {
     },
     {
       name: "Rank",
-      link: "/rank",
+      link: "/leaderboards",
       icon: StarIcon,
     },
   ];
