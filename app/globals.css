@@ -36,3 +36,40 @@ body {
 .css-cyqh1t-MuiPaper-root-MuiDrawer-paper {
   background-color: #1f2630;
 }
+
+.css-24wuob-MuiDataGrid-root .MuiDataGrid-container--top [role=row], 
+.css-24wuob-MuiDataGrid-root .MuiDataGrid-container--bottom [role=row] {
+  background-color: #161b22;
+}
+
+.css-5hhc74-MuiDataGrid-root .MuiDataGrid-container--top [role=row],
+ .css-5hhc74-MuiDataGrid-root .MuiDataGrid-container--bottom [role=row] {
+  background-color: #161b22;
+ }
+
+.css-1gak8h1-MuiToolbar-root-MuiTablePagination-toolbar {
+  color: #ffffff;
+}
+
+.css-5hhc74-MuiDataGrid-root {
+  --DataGrid-rowBorderColor: none;
+  border: none;
+}
+
+.css-15lx25q-MuiDataGrid-footerContainer {
+  border: none;
+}
+
+::-webkit-scrollbar {
+  width: 8px; 
+}
+
+::-webkit-scrollbar-track {
+  background-color: #333333;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #999999; 
+  border-radius: 10px;
+}
+ 

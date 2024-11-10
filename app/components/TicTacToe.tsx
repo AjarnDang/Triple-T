@@ -77,18 +77,15 @@ const Board: React.FC<BoardProps> = ({ setScore, setStreak, streak }) => {
 
     let selectedMove;
     if (difficulty === "Easy") {
-      // Easy mode: Random move
       selectedMove =
         availableMoves[Math.floor(Math.random() * availableMoves.length)];
     } else if (difficulty === "Medium") {
-      // Medium mode: 50% chance to make a random move
       const winningMove = findWinningMove("O") || findWinningMove("X");
       selectedMove =
         Math.random() > 0.5 && winningMove !== null
           ? winningMove
           : availableMoves[Math.floor(Math.random() * availableMoves.length)];
     } else if (difficulty === "Hard") {
-      // Hard mode: Prioritize blocking X and winning moves
       selectedMove =
         findWinningMove("O") ||
         findWinningMove("X") ||
@@ -183,7 +180,7 @@ const Board: React.FC<BoardProps> = ({ setScore, setStreak, streak }) => {
           onClick={() => setDifficulty("Easy")}
           className={`px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg ${
             difficulty === "Easy"
-              ? "bg-blue-800 text-white" // Active state
+              ? "bg-blue-800 text-white"
               : "hover:bg-gray-100 hover:text-blue-700"
           } focus:z-10 focus:ring-2 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white`}
         >
@@ -194,7 +191,7 @@ const Board: React.FC<BoardProps> = ({ setScore, setStreak, streak }) => {
           onClick={() => setDifficulty("Medium")}
           className={`px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 ${
             difficulty === "Medium"
-              ? "bg-blue-800 text-white" // Active state
+              ? "bg-blue-800 text-white"
               : "hover:bg-gray-100 hover:text-blue-700"
           } focus:z-10 focus:ring-2 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white`}
         >
@@ -205,7 +202,7 @@ const Board: React.FC<BoardProps> = ({ setScore, setStreak, streak }) => {
           onClick={() => setDifficulty("Hard")}
           className={`px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg ${
             difficulty === "Hard"
-              ? "bg-blue-800 text-white" // Active state
+              ? "bg-blue-800 text-white"
               : "hover:bg-gray-100 hover:text-blue-700"
           } focus:z-10 focus:ring-2 dark:bg-gray-800 dark:border-gray-700 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:ring-blue-500 dark:focus:text-white`}
         >
@@ -249,10 +246,10 @@ const App: React.FC = () => {
 
   if (session) {
     return (
-      <div className="relative grid lg:grid-cols-3 grid-cols-1 gap-4">
+      <div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
         <div className="lg:col-span-2">
           <h1 className="text-2xl font-bold mb-8">TicTacToe</h1>
-          <div className="flex justify-center items-center h-[70vh]">
+          <div className="flex justify-center items-center h-[50vh]">
             <Board setScore={setScore} setStreak={setStreak} streak={streak} />
           </div>
         </div>

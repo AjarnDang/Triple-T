@@ -3,7 +3,7 @@ import TicTacToe from "@/app/components/TicTacToe";
 
 const GamesPage: React.FC = () => {
   return (
-    <div>
+    <div className="grow">
       <TicTacToe />
     </div>
   );
