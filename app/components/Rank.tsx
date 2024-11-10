@@ -12,7 +12,7 @@ export default function Rank() {
             <div>Win Rate</div>
           </div>
         </div>
-      {rankData.map((player) => (
+      {rankData.slice(0, 10).map((player) => (
         <div key={player.username} className="grid grid-cols-2 mb-1">
           <div>{player.username}</div>
           <div className="grid grid-cols-2 text-right">

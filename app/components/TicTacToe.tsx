@@ -164,7 +164,7 @@ const Board: React.FC<BoardProps> = ({ setScore, setStreak, streak }) => {
     setSquares(Array(9).fill(""));
     setWinner(null);
     setXIsNext(true);
-    setDifficulty("Medium");
+    // setDifficulty("Medium");
   };
 
   useEffect(() => {
