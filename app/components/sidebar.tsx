@@ -34,17 +34,17 @@ export default function SidebarDrawer() {
       icon: HomeIcon,
     },
     {
-      name: "Doc",
+      name: "Document",
       link: "/doc",
       icon: DescriptionIcon,
     },
     {
-      name: "Play",
+      name: "Play Game",
       link: "/game",
       icon: GamesIcon,
     },
     {
-      name: "Rank",
+      name: "Leaderboards",
       link: "/leaderboards",
       icon: StarIcon,
     },
